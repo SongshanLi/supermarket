@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+
+<configuration>
+	<settings>
+		<setting name="logImpl" value="LOG4J" />
+	</settings>
+	<typeAliases>
+		<!-- <typeAlias type="cn.jbit.mb.pojo.Provider" alias="Provider"/> --><!-- 类cn.jbit.mb.pojo.Provider使用别名 Provider -->
+		<package name="cn.smbms.pojo"/><!-- 所有这个包下的类都默认使用别名，别名就是类名 -->
+	</typeAliases>
+</configuration>
