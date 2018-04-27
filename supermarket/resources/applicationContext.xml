@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd">
+        <context:component-scan base-package="cn.smbms.service"></context:component-scan>
+        <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		    <property name="locations" value="classpath:database.properties"/>
+		</bean>
+		<!-- <bean id="dataSource" destroy-method="close"
+		        class="org.apache.commons.dbcp.BasicDataSource">
+		    <property name="driverClassName" value="${driver}"/>
+		    <property name="url" value="${url}"/>
+		    <property name="username" value="${user}"/>
+		    <property name="password" value="${password}"/>
+		</bean> -->
+		<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+		    <property name="driverClass" value="${driver}"/>
+		    <property name="jdbcUrl" value="${url}"/>
+		    <property name="user" value="${user}"/>
+		    <property name="password" value="${password}"/>
+		</bean>
+		<!-- <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		    <property name="driverClassName" value="${driver}"/>
+		    <property name="url" value="${url}"/>
+		    <property name="username" value="${user}"/>
+		    <property name="password" value="${password}"/>
+		</bean> -->
+		<!-- mybatis的sql会话工厂，用spring来构建，使用了上面的数据源，以及mybatis-config.xml中的配置信息 -->
+        <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        	<property name="configLocation" value="classpath:mybatis-config.xml"></property>
+        	<property name="dataSource" ref="dataSource"></property>
+        </bean>
+        <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        	<!-- 将扫描 cn.jbit.mapper包，寻找mybatis的映射-->
+        	<property name="basePackage" value="cn.smbms.dao.*"></property>
+        	<!-- 使用上面的sqlSessionFactory -->
+        	<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
+        </bean>
+        <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+	        <property name="dataSource" ref="dataSource"/>
+	    </bean>
+	    <!-- 用注解进行事务控制 -->
+	    <tx:annotation-driven transaction-manager="txManager"/>
+	    <!-- 用配置进行事务控制 -->
+	    <!-- <tx:advice id="txAdvice" transaction-manager="txManager">通知、切面，表示事务的切面逻辑，在主逻辑前后该怎么操作事务
+	        <tx:attributes>
+	            <tx:method name="get*" read-only="true"/>get开头的方法用只读事务
+	            <tx:method name="*"/>其他方法用默认事务
+	        </tx:attributes>
+	    </tx:advice>
+	    <aop:config>service包下的所有类所有方法都应用上面的事务通知
+	        <aop:pointcut id="pc" expression="execution(* cn.jbit.service.*.*(..))"/>
+	        <aop:advisor advice-ref="txAdvice" pointcut-ref="pc"/>
+	    </aop:config> -->
+	    
+</beans>
+
+
+
+
+
+
+
